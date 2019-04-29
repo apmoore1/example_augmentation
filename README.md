@@ -47,7 +47,16 @@ python augment_transformer.py data/splits/Restaurant\ Train ../yelp_language_mod
 ``` bash
 python augment_embedding.py data/splits/Restaurant\ Train ./embeddings/yelp/lower\ case\ phrase\ stanford\ 300D ./target_words/restaurant/restaurant_train.json ./original_augmentation_datasets/restaurant/embedding.json 'spacy' --lower
 ```
+#### Plotting the domain specific embeddings similarity scores
+Here we want to know the distrbution of the similarity scores so that we can create a threshold value. This threshold value is a lot easier for the language model as we can use the perplexity score of the original sentence and only choose targets that are equal or lower to that original perplexity score.
 
+The similarity scores that we will use to create this distribution will come from the expanded dataset above. Even though this will cause a bais towards targets the occur more frequently this bias comes from the training data so we are going to keep that bias.
+``` bash
+python embedding_similarity_dist.py original_augmentation_datasets/restaurant/embedding.json ./images/embedding_similarity_dist/restaurant.png 10.0
+
+python embedding_similarity_dist.py original_augmentation_datasets/restaurant/embedding.json ./images/embedding_similarity_dist/restaurant.png 5.0
+```
+This will show that the simiarity value of 0.36 (0.418) will cover 10% (5%) of the simialrity values within the augmented dataset. The plot returned from this command shows that the data is not normally distributed and this is confirmed by the `D’Agostino and Pearson’s` normality test. 
 
 If we open `./augmentation_sentence_examples/restaurant/embedding.tsv` we can see the sentence on line 24 is a problem with regards to its suggested target replacements:
 
