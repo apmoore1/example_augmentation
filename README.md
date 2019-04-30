@@ -58,6 +58,30 @@ python embedding_similarity_dist.py original_augmentation_datasets/restaurant/em
 ```
 This will show that the simiarity value of 0.36 (0.418) will cover 10% (5%) of the simialrity values within the augmented dataset. The plot returned from this command shows that the data is not normally distributed and this is confirmed by the `D’Agostino and Pearson’s` normality test. 
 
+#### Creating new Training datasets
+Here we show how we create **K** best alternative target datasets and **K Threshold** alternative datasets:
+##### K
+This is where we choose the **K** most similar targets based on either the language model or the embedding. Below is the command to run to create both of these datasets respectively:
+``` bash
+python create_datasets.py original_augmentation_datasets/restaurant/yelp_lm.json augmented_data/restaurant/no_additional_targets/lm_10_no_threshold.json 10 --lm
+python create_datasets.py original_augmentation_datasets/restaurant/embedding.json augmented_data/restaurant/no_additional_targets/embedding_10_no_threshold.json 10 --embedding
+```
+Where in both cases we can see that **K** is 10. We repeat this same process for `[2,3,5]` values of **K**.
+##### K Threshold
+This is the same as [above](#k) except that we restrict the **K** most similar to only those **K** that pass some sort of threshold, in the case of the language model this is that the **K** targets when within the sentence the perplexity of the sentence is lower or equal to the same sentence but with the original target. In the embedding case it's not context/sentence specific rather we have to define up front a specific similarity score that the **K** targets have to be greater or equal to the similarity of the original target. To inform us on the similarity threshold to use we look at the similarity plot produced in the [above section](#plotting-the-domain-specific-embeddings-similarity-scores) and from this we have decided 0.418 as it will only allow the top 5% of the most similar targets through and hopefully increase precision when **K** is large. The command top produce the threshold dataset is shown below for **K** equal to 10:
+``` bash
+python create_datasets.py original_augmentation_datasets/restaurant/yelp_lm.json augmented_data/restaurant/no_additional_targets/lm_10.json 10 --lm --threshold 1
+python create_datasets.py original_augmentation_datasets/restaurant/embedding.json augmented_data/restaurant/no_additional_targets/embedding_10.json 10 --embedding --threshold 0.418
+``` 
+We repeat this same process for `[2,3,5]` values of **K**, without changing the threshold limit for the embedding which is **0.418**.
+
+#### The affects this has on modelling
+Here we show the affects that data augmentation has on the sentiment models. The models that we shall use are the following:
+1. IAN
+2. TDSLTM
+
+
+
 If we open `./augmentation_sentence_examples/restaurant/embedding.tsv` we can see the sentence on line 24 is a problem with regards to its suggested target replacements:
 
 sentence: `It's also attached to Angel's Share, which is a cool, more romantic [bar]...`
