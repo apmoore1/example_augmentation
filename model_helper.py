@@ -47,3 +47,23 @@ def run_n_times(model: AllenNLPModel, train: TargetCollection,
         test_results.append(test_result)
         val_results.append(val_result)
     return np.concatenate(test_results, 1), np.concatenate(val_results, 1)
+
+def get_result(data_folder: Path, number_runs: int, test=True
+               ) -> np.ndarray:
+    '''
+    Given a folder that contains numpy files of the following 
+    naming structure:
+    `run {run_number} {val/test}.npy` 
+    it will load all run number files for a given dataset (test
+    or val) and return a numpy array where the array is of shape:
+    *n* * *number_runs* where *n* is the test or val sample size.
+    '''
+    results = []
+    for run_number in range(number_runs):
+        data_file_name = f'run {run_number} val.npy'
+        if test:
+            data_file_name = f'run {run_number} test.npy'
+        
+        result = np.load(Path(data_folder, data_file_name))
+        results.append(np.expand_dims(result, 1))
+    return np.concatenate(results, 1)
