@@ -88,6 +88,14 @@ Here we show the affects that data augmentation has on the sentiment models. The
 1. IAN
 2. TDSLTM
 
+Plotting the results, we can use the following command to plot the results for Validation and Test sets with both Macro F1 and Accuracy metrics:
+``` bash
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Test 'macro_f1' ./images/results/no_additional_targets_macro_f1_test.png
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Val 'macro_f1' ./images/results/no_additional_targets_macro_f1_val.png --val
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Test 'accuracy' ./images/results/no_additional_targets_accuracy_test.png
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Val 'accuracy' ./images/results/no_additional_targets_accuracy_val.png --val
+```
+
 
 
 If we open `./augmentation_sentence_examples/restaurant/embedding.tsv` we can see the sentence on line 24 is a problem with regards to its suggested target replacements:
