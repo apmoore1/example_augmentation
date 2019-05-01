@@ -76,6 +76,14 @@ python create_datasets.py original_augmentation_datasets/restaurant/embedding.js
 We repeat this same process for `[2,3,5]` values of **K**, without changing the threshold limit for the embedding which is **0.418**.
 
 #### The affects this has on modelling
+First to ensure that the learning rates that we have selected in the model configurations are suitable we can run the following to plot learning rate against loss for the first 100 batches in the training data: (Currently one problem with this method is that when we do it for several modls at the same time it plots over each other)
+``` bash
+python find_lr_models.py ./data/splits/Restaurant\ Train results/learning_rates/ ./model_configs/ Restaurant /tmp/find_lr.log
+```
+
+``` bash
+./run_script.sh /home/andrew/Envs/example_augmentation/bin/python
+```
 Here we show the affects that data augmentation has on the sentiment models. The models that we shall use are the following:
 1. IAN
 2. TDSLTM
