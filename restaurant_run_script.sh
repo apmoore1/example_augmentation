@@ -32,3 +32,5 @@ augmented_data_path="./augmented_data/restaurant/no_additional_targets/embedding
 $1 run_models.py 5 ./data/splits/ ./results/augmentation/no_additional_targets/threshold_embedding$k ./model_configs Restaurant ./log_dir --augmented_data_fp $augmented_data_path
 done
 echo 'Finished Running the Embedding model augmentation with no additional targets with threshold'
+echo "Running the baseline Restaurant models"
+$1 run_models.py 5 ./data/splits/ ./results/baseline ./model_configs Restaurant ./log_dir

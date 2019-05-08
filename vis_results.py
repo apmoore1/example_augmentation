@@ -33,6 +33,8 @@ if __name__=='__main__':
                         help='Metric score to use')
     parser.add_argument('save_fp', type=parse_path, 
                         help='File path to save figure')
+    parser.add_argument('dataset_name', type=str, 
+                        choices=['Restaurant','Laptop'])
     parser.add_argument("--val", action="store_true", 
                         help='Use Validation data and not test')
     args = parser.parse_args()
@@ -40,7 +42,7 @@ if __name__=='__main__':
     result_dir = args.result_dir
     num_runs = args.num_runs
     model_names = ['atae', 'bilinear', 'ian', 'tdlstm', 'tclstm']
-    dataset_name = 'Restaurant'
+    dataset_name = args.dataset_name
     values_of_k = [2,3,5,10]
     augmentation_technique = ['embedding', 'lm']
     thresholding = ['no_threshold_', 'threshold_']
@@ -82,9 +84,29 @@ if __name__=='__main__':
             #    x_k.append(k)
             #    all_techniques.append(f'{tech} {threshold}')
             #    all_model_names.append(model_name)
+    baseline_results_dir = Path('./results/baseline')
+    for model_name in model_names:
+        base_model_dir = Path(baseline_results_dir, model_name)
+        base_data_dir = Path(base_model_dir, dataset_name)
+        model_results = get_result(base_data_dir, num_runs, test=test)
+        
+        data_copy = copy.deepcopy(test_data)
+        test_data.add_pred_sentiment(model_results)
+        if metric_score == 'accuracy':
+            all_results = test_data.dataset_metric_scores(accuracy_score)
+        else:
+            all_results = test_data.dataset_metric_scores(f1_score,
+                                                          average='macro')
+        result = statistics.mean(all_results)
+        for k in values_of_k:
+            y_score.append(result)
+            x_k.append(k)
+            all_techniques.append(f'baseline')
+            all_model_names.append(model_name)
+
     plot_data = pd.DataFrame({'Model Name': all_model_names, f'{metric_score}': y_score,
                                'K': x_k, 'Augmentation Technique': all_techniques})
-    g = sns.FacetGrid(plot_data, col="Model Name", col_wrap=5, height=5,
+    g = sns.FacetGrid(plot_data, col="Model Name", col_wrap=2, height=5,
                       hue="Augmentation Technique")
     g = (g.map(plt.plot, "K", f'{metric_score}', marker=".")).add_legend()
     g.savefig(str(args.save_fp))
