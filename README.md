@@ -203,6 +203,16 @@ related targets: `bars(0.611)`, `pub(0.5102)`, `bartender(0.4999)`, `bartenders(
 
 As we can see the first is wrong as it is non-singular, the second and fifth are plausible but the third and fourth are completely wrong but are related by topic.
 
+## Converting the word vectors from binary file to text file
+``` bash
+python from_vector_to_txt.py ./embeddings/yelp/lower\ case\ phrase\ stanford\ 300D ./embeddings/yelp/ds_embedding.txt
+python from_vector_to_txt.py ./embeddings/amazon/lower\ case\ phrase\ stanford\ 300D ./embeddings/amazon/ds_embedding.txt
+```
+
+## Are language models embedding better than embeddings and is domain speicifc required?
+``` bash
+./lm_embedding_run_script.sh /home/andrew/Envs/example_augmentation/bin/python
+```
 
 ## References
 
