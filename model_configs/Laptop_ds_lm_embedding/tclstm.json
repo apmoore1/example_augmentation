@@ -1,0 +1,71 @@
+{
+    "dataset_reader": {
+      "type": "tdlstm_dataset",
+      "incl_target": true,
+      "token_indexers": {
+        "tokens": {
+          "type": "single_id",
+          "lowercase_tokens": true
+        },
+        "elmo": {
+          "type": "elmo_characters"
+        }
+      }
+    },
+    "model": {
+      "type": "tdlstm_classifier",
+      "text_field_embedder": {
+        "token_embedders": {
+          "tokens": {
+            "type": "embedding",
+            "embedding_dim": 300,
+            "pretrained_file": "./embeddings/glove.840B.300d.txt",
+            "trainable": true
+            },
+          "elmo": {
+            "type": "bidirectional_lm_token_embedder",
+            "archive_file": "../amazon_language_model_save_large/model.tar.gz",
+            "bos_eos_tokens": ["<S>", "</S>"],
+            "remove_bos_eos": true,
+            "requires_grad": false
+          }
+            
+        }
+      },
+      "left_text_encoder": {
+        "type": "lstm",
+        "bidirectional": false,
+        "input_size": 2648,
+        "hidden_size": 600,
+        "num_layers": 1
+      },
+      "right_text_encoder": {
+        "type": "lstm",
+        "bidirectional": false,
+        "input_size": 2648,
+        "hidden_size": 600,
+        "num_layers": 1
+      },
+      "target_encoder": {
+        "type": "boe",
+        "embedding_dim": 1324,
+        "averaged": true
+      },
+    "dropout": 0.5
+    },
+    "iterator": {
+      "type": "basic",
+      "batch_size": 32
+    },
+  
+    "trainer": {
+        "num_epochs": 100,
+        "patience": 5,
+        "cuda_device": 0,
+        "shuffle": true,
+        "validation_metric": "+accuracy",
+        "optimizer": {
+            "type": "adam"
+        }
+      }
+  }

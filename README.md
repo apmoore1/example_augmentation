@@ -99,10 +99,10 @@ Here we show the affects that data augmentation has on the sentiment models. The
 
 Plotting the results, we can use the following command to plot the results for Validation and Test sets with both Macro F1 and Accuracy metrics:
 ``` bash
-python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Test 'macro_f1' ./images/results/restaurant/no_additional_targets_macro_f1_test.png Restaurant
-python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Val 'macro_f1' ./images/results/restaurant/no_additional_targets_macro_f1_val.png Restaurant --val
-python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Test 'accuracy' ./images/results/restaurant/no_additional_targets_accuracy_test.png Restaurant
-python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Val 'accuracy' ./images/results/restaurant/no_additional_targets_accuracy_val.png Restaurant --val
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Test 'Macro F1' ./images/results/restaurant/augmentation/no_additional_targets_macro_f1_test.png Restaurant
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Val 'Macro F1' ./images/results/restaurant/augmentation/no_additional_targets_macro_f1_val.png Restaurant --val
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Test 'Accuracy' ./images/results/restaurant/augmentation/no_additional_targets_accuracy_test.png Restaurant
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Restaurant\ Val 'Accuracy' ./images/results/restaurant/augmentation/no_additional_targets_accuracy_val.png Restaurant --val
 ```
 
 
@@ -186,10 +186,10 @@ Here we show the affects that data augmentation has on the sentiment models. The
 
 Plotting the results, we can use the following command to plot the results for Validation and Test sets with both Macro F1 and Accuracy metrics:
 ``` bash
-python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Laptop\ Test 'macro_f1' ./images/results/laptop/no_additional_targets_macro_f1_test.png Laptop
-python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Laptop\ Val 'macro_f1' ./images/results/laptop/no_additional_targets_macro_f1_val.png Laptop --val
-python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Laptop\ Test 'accuracy' ./images/results/laptop/no_additional_targets_accuracy_test.png Laptop
-python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Laptop\ Val 'accuracy' ./images/results/laptop/no_additional_targets_accuracy_val.png Laptop --val
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Laptop\ Test 'Macro F1' ./images/results/laptop/augmentation/no_additional_targets_macro_f1_test.png Laptop
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Laptop\ Val 'Macro F1' ./images/results/laptop/augmentation/no_additional_targets_macro_f1_val.png Laptop --val
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Laptop\ Test 'Accuracy' ./images/results/laptop/augmentation/no_additional_targets_accuracy_test.png Laptop
+python vis_results.py 5 results/augmentation/no_additional_targets/ data/splits/Laptop\ Val 'Accuracy' ./images/results/laptop/augmentation/no_additional_targets_accuracy_val.png Laptop --val
 ```
 
 
@@ -212,6 +212,13 @@ python from_vector_to_txt.py ./embeddings/amazon/lower\ case\ phrase\ stanford\ 
 ## Are language models embedding better than embeddings and is domain speicifc required?
 ``` bash
 ./lm_embedding_run_script.sh /home/andrew/Envs/example_augmentation/bin/python
+```
+and to visulise the results:
+``` bash
+python vis_domain_results.py 5 ./results/ data/splits/Laptop\ Test 'Macro F1' images/results/laptop/domain_specific/macro_f1_test_val.png Laptop --val_fp data/splits/Laptop\ Val
+python vis_domain_results.py 5 ./results/ data/splits/Laptop\ Test 'Accuracy' images/results/laptop/domain_specific/accuracy_test_val.png Laptop --val_fp data/splits/Laptop\ Val
+python vis_domain_results.py 5 ./results/ data/splits/Restaurant\ Test 'Macro F1' images/results/restaurant/domain_specific/macro_f1_test_val.png Restaurant --val_fp data/splits/Restaurant\ Val
+python vis_domain_results.py 5 ./results/ data/splits/Restaurant\ Test 'Accuracy' images/results/restaurant/domain_specific/accuracy_test_val.png Restaurant --val_fp data/splits/Restaurant\ Val
 ```
 
 ## References

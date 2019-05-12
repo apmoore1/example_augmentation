@@ -29,7 +29,7 @@ if __name__=='__main__':
     parser.add_argument("test_data_fp", type=parse_path, 
                         help='File Path to the test data')
     parser.add_argument('metric_score', type=str, 
-                        choices=['accuracy', 'macro_f1'],
+                        choices=['Accuracy', 'Macro F1'],
                         help='Metric score to use')
     parser.add_argument('save_fp', type=parse_path, 
                         help='File path to save figure')
@@ -42,10 +42,16 @@ if __name__=='__main__':
     result_dir = args.result_dir
     num_runs = args.num_runs
     model_names = ['atae', 'bilinear', 'ian', 'tdlstm', 'tclstm']
+    model_name_mapper = {'atae': 'ATAE', 'bilinear': 'BiLinear', 'ian': 'IAN',
+                         'tdlstm': 'TDLSTM', 'tclstm': 'TCLSTM'}
     dataset_name = args.dataset_name
     values_of_k = [2,3,5,10]
     augmentation_technique = ['embedding', 'lm']
     thresholding = ['no_threshold_', 'threshold_']
+    technique_threshold_mapper = {'no_threshold_embedding': 'Embedding',
+                                  'threshold_embedding': 'Embedding T',
+                                  'no_threshold_lm': 'LM', 
+                                  'threshold_lm': 'LM T'}
 
     test_data_fp = args.test_data_fp
     test_data = TargetCollection.load_from_json(test_data_fp)
@@ -68,22 +74,17 @@ if __name__=='__main__':
             model_result_dir = Path(result_dir, folder_name, model_name, dataset_name)
             model_results = get_result(model_result_dir, num_runs, test=test)
             data_copy = copy.deepcopy(test_data)
-            test_data.add_pred_sentiment(model_results)
-            if metric_score == 'accuracy':
-                all_results = test_data.dataset_metric_scores(accuracy_score)
+            data_copy.add_pred_sentiment(model_results)
+            if metric_score == 'Accuracy':
+                all_results = data_copy.dataset_metric_scores(accuracy_score)
             else:
-                all_results = test_data.dataset_metric_scores(f1_score,
+                all_results = data_copy.dataset_metric_scores(f1_score,
                                                               average='macro')
-            result = statistics.mean(all_results)
-            y_score.append(result)
-            x_k.append(k)
-            all_techniques.append(f'{tech} {threshold}')
-            all_model_names.append(model_name)
-            #for result in all_results:
-            #    y_score.append(result)
-            #    x_k.append(k)
-            #    all_techniques.append(f'{tech} {threshold}')
-            #    all_model_names.append(model_name)
+            for result in all_results:
+                y_score.append(result)
+                x_k.append(k)
+                all_techniques.append(technique_threshold_mapper[f'{threshold}{tech}'])
+                all_model_names.append(model_name_mapper[model_name])
     baseline_results_dir = Path('./results/baseline')
     for model_name in model_names:
         base_model_dir = Path(baseline_results_dir, model_name)
@@ -91,22 +92,22 @@ if __name__=='__main__':
         model_results = get_result(base_data_dir, num_runs, test=test)
         
         data_copy = copy.deepcopy(test_data)
-        test_data.add_pred_sentiment(model_results)
-        if metric_score == 'accuracy':
-            all_results = test_data.dataset_metric_scores(accuracy_score)
+        data_copy.add_pred_sentiment(model_results)
+        if metric_score == 'Accuracy':
+            all_results = data_copy.dataset_metric_scores(accuracy_score)
         else:
-            all_results = test_data.dataset_metric_scores(f1_score,
+            all_results = data_copy.dataset_metric_scores(f1_score,
                                                           average='macro')
-        result = statistics.mean(all_results)
-        for k in values_of_k:
-            y_score.append(result)
-            x_k.append(k)
-            all_techniques.append(f'baseline')
-            all_model_names.append(model_name)
+        for result in all_results:
+            for k in values_of_k:
+                y_score.append(result)
+                x_k.append(k)
+                all_techniques.append(f'baseline')
+                all_model_names.append(model_name_mapper[model_name])
 
-    plot_data = pd.DataFrame({'Model Name': all_model_names, f'{metric_score}': y_score,
-                               'K': x_k, 'Augmentation Technique': all_techniques})
-    g = sns.FacetGrid(plot_data, col="Model Name", col_wrap=2, height=5,
-                      hue="Augmentation Technique")
-    g = (g.map(plt.plot, "K", f'{metric_score}', marker=".")).add_legend()
+    plot_data = pd.DataFrame({'Model': all_model_names, f'{metric_score}': y_score,
+                               'K': x_k, 'Augmentation\nTechnique': all_techniques})
+    g = sns.catplot(x='K', y=f'{metric_score}', hue='Augmentation\nTechnique',
+                    col='Model', height=5, col_wrap=3, data=plot_data,
+                    kind="point", ci='sd', dodge=0.5)
     g.savefig(str(args.save_fp))
