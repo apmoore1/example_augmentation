@@ -38,6 +38,8 @@ if __name__=='__main__':
                         type=parse_path)
     parser.add_argument("--augmented_data_fp", help="Augmented data directory",
                         type=parse_path)
+    parser.add_argument("--model_names", nargs='+', type=str)
+    parser.add_argument("--model_name_save_names", nargs='+', type=str)
     args = parser.parse_args()
 
     dataset_name = args.dataset_name
@@ -60,14 +62,22 @@ if __name__=='__main__':
 
     # Models
     model_names = ['atae', 'bilinear', 'ian', 'tdlstm', 'tclstm']
+    if args.model_names:
+        model_names = args.model_names
+    if args.model_name_save_names:
+        model_name_save_names = args.model_name_save_names
+        model_name_mapper = {model_name: save_name for model_name, save_name in 
+                             zip(model_names, model_name_save_names)}
+    else:
+        model_name_mapper = {model_name: model_name for model_name in model_names}
     bilstm_names = ['']
     all_model_names = product(model_names, bilstm_names)
     all_models = []
     for model_name, bilstm_name in all_model_names:
         model_name = f'{model_name}{bilstm_name}'.strip()
         model_config_fp = Path(model_config_dir, f'{model_name}.json')
-        all_models.append(AllenNLPModel(model_name, model_config_fp))
-
+        all_models.append(AllenNLPModel(model_name_mapper[model_name], 
+                                        model_config_fp))
     # Data
     path_dataset = lambda _dir, name: TargetCollection.load_from_json(Path(_dir, name))
     train = path_dataset(data_dir, f'{dataset_name} Train')

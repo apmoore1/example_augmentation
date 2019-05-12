@@ -91,7 +91,7 @@ python find_lr_models.py ./data/splits/Restaurant\ Train results/learning_rates/
 ```
 
 ``` bash
-./restaurant_run_script.sh /home/andrew/Envs/example_augmentation/bin/python
+./restaurant_run_script.sh /home/andrew/Envs/example_augmentation/bin/python ./model_configs/standard
 ```
 Here we show the affects that data augmentation has on the sentiment models. The models that we shall use are the following:
 1. IAN
@@ -178,7 +178,7 @@ python find_lr_models.py ./data/splits/Laptop\ Train results/learning_rates/ ./m
 ```
 
 ``` bash
-./laptop_run_script.sh /home/andrew/Envs/example_augmentation/bin/python
+./laptop_run_script.sh /home/andrew/Envs/example_augmentation/bin/python ./model_configs/standard
 ```
 Here we show the affects that data augmentation has on the sentiment models. The models that we shall use are the following:
 1. IAN
@@ -220,6 +220,13 @@ python vis_domain_results.py 5 ./results/ data/splits/Laptop\ Test 'Accuracy' im
 python vis_domain_results.py 5 ./results/ data/splits/Restaurant\ Test 'Macro F1' images/results/restaurant/domain_specific/macro_f1_test_val.png Restaurant --val_fp data/splits/Restaurant\ Val
 python vis_domain_results.py 5 ./results/ data/splits/Restaurant\ Test 'Accuracy' images/results/restaurant/domain_specific/accuracy_test_val.png Restaurant --val_fp data/splits/Restaurant\ Val
 ```
+
+## What happens when augmentation meets domain specific LM?
+ATAE Laptop with DS LM and Glove:
+``` bash
+./laptop_run_script.sh /home/andrew/Envs/example_augmentation/bin/python ./model_configs/Laptop_ds_lm_embedding 'atae' 'atae_ds_lm_embedding'
+```
+
 
 ## References
 
