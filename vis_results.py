@@ -41,9 +41,9 @@ if __name__=='__main__':
     metric_score = args.metric_score
     result_dir = args.result_dir
     num_runs = args.num_runs
-    model_names = ['atae', 'bilinear', 'ian', 'tdlstm', 'tclstm']
+    model_names = ['atae', 'bilinear', 'ian', 'tdlstm', 'tclstm', 'atae_ds_lm_embedding']
     model_name_mapper = {'atae': 'ATAE', 'bilinear': 'BiLinear', 'ian': 'IAN',
-                         'tdlstm': 'TDLSTM', 'tclstm': 'TCLSTM'}
+                         'tdlstm': 'TDLSTM', 'tclstm': 'TCLSTM', 'atae_ds_lm_embedding': 'ATAE ELMo T'}
     dataset_name = args.dataset_name
     values_of_k = [2,3,5,10]
     augmentation_technique = ['embedding', 'lm']
@@ -80,14 +80,23 @@ if __name__=='__main__':
             else:
                 all_results = data_copy.dataset_metric_scores(f1_score,
                                                               average='macro')
+            results_len_error = f'Number of runs {num_runs} does not match '\
+                                f'number of results {len(all_results)} for '\
+                                f'the following directory {model_result_dir}'
+            assert len(all_results) == num_runs, results_len_error
             for result in all_results:
                 y_score.append(result)
                 x_k.append(k)
                 all_techniques.append(technique_threshold_mapper[f'{threshold}{tech}'])
                 all_model_names.append(model_name_mapper[model_name])
-    baseline_results_dir = Path('./results/baseline')
+    
     for model_name in model_names:
-        base_model_dir = Path(baseline_results_dir, model_name)
+        if model_name == 'atae_ds_lm_embedding':
+            baseline_results_dir = Path('./results/ds_lm_ds_embedding')
+            base_model_dir = Path(baseline_results_dir, 'atae')
+        else:
+            baseline_results_dir = Path('./results/baseline')
+            base_model_dir = Path(baseline_results_dir, model_name)
         base_data_dir = Path(base_model_dir, dataset_name)
         model_results = get_result(base_data_dir, num_runs, test=test)
         
@@ -98,6 +107,10 @@ if __name__=='__main__':
         else:
             all_results = data_copy.dataset_metric_scores(f1_score,
                                                           average='macro')
+        results_len_error = f'Number of runs {num_runs} does not match '\
+                            f'number of results {len(all_results)} for '\
+                            f'the following directory {base_data_dir}'
+        assert len(all_results) == num_runs, results_len_error
         for result in all_results:
             for k in values_of_k:
                 y_score.append(result)

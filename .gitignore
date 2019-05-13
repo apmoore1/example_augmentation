@@ -2,3 +2,9 @@ data
 embeddings
 .vscode
 __pycache__
+*.aux
+*.fdb*
+*.log
+*.pdf
+*.synctex*
+*.fls

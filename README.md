@@ -203,6 +203,40 @@ related targets: `bars(0.611)`, `pub(0.5102)`, `bartender(0.4999)`, `bartenders(
 
 As we can see the first is wrong as it is non-singular, the second and fifth are plausible but the third and fourth are completely wrong but are related by topic.
 
+## Anaylsing the results of K
+Here we want to know if **K** is significant or not, furthermore we will expore this in two ways:
+
+1. Is the Best K for each model and augmentation technique significantly better than the worse K?
+2. Is the Best K for each model and augmentation technique sigificantly better than the next best K?
+
+We are going to break down the code commands to generate the scores for these based on Metric and data split (Validation or Test). For each run it calculates the significants based on one-tailed paired bootstrap test with 10,000 bootstrap samples. As each of the models and augmentation techniques have been run 5 times to take into account the random seed problem we will take the median best model for each to compare significant values.
+
+### Validation
+#### Accuracy
+
+We will break this down for both the validation and test sets. For the validation sets for both Macro F1 and Accuracy scores for the laptop dataset:
+``` bash
+python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Accuracy' Laptop 0.1 --bootstrap_samples 10000 --val
+python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Accuracy' Laptop 0.05 --bootstrap_samples 10000 --val
+python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Accuracy' Laptop 0.05 --bootstrap_samples 10000 --second_best --val
+python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Accuracy' Laptop 0.1 --bootstrap_samples 10000 --second_best --val
+```
+The results for this can be found in the following [pdf](./latex/k_results/validation_accuracy.pdf) and [latex](./latex/k_results/validation_accuracy.latex) file (pdf is a rendering of the latex).
+
+#### Macro F1
+``` bash
+python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.1 --bootstrap_samples 10000 --val
+python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.05 --bootstrap_samples 10000 --val
+python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.05 --bootstrap_samples 10000 --second_best --val
+python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.1 --bootstrap_samples 10000 --second_best --val
+```
+The results for this can be found in the following [pdf](./latex/k_results/validation_macro_f1.pdf) and [latex](./latex/k_results/validation_macro_f1.latex) file (pdf is a rendering of the latex).
+
+### Test
+#### Accuracy
+#### Macro F1
+
+
 ## Converting the word vectors from binary file to text file
 ``` bash
 python from_vector_to_txt.py ./embeddings/yelp/lower\ case\ phrase\ stanford\ 300D ./embeddings/yelp/ds_embedding.txt
