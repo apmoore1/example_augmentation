@@ -230,6 +230,11 @@ python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Be
 python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.05 --bootstrap_samples 10000 --second_best --val
 python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.1 --bootstrap_samples 10000 --second_best --val
 ```
+Number of models and augmentation techniques whose Best K is Statistically significantly (p < 0.1) better than the worse K is 7 out of 24 cases.
+Number of models and augmentation techniques whose Best K is Statistically significantly (p < 0.05) better than the worse K is 6 out of 24 cases
+Number of models and augmentation techniques whose Best K is Statistically significantly (p < 0.05) better than the second best K is 5 out of 24 cases
+
+
 The results for this can be found in the following [pdf](./latex/k_results/validation_macro_f1.pdf) and [latex](./latex/k_results/validation_macro_f1.latex) file (pdf is a rendering of the latex).
 
 ### Test
