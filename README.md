@@ -208,6 +208,8 @@ Here we want to know if **K** is significant or not, furthermore we will expore 
 
 1. Is the Best K for each model and augmentation technique significantly better than the worse K?
 2. Is the Best K for each model and augmentation technique sigificantly better than the next best K?
+3. Is there a trend of best K's and significantly worse K's? -- This is shown through the number of times K is best for each metric and data split and the number of times a K is significantly worse than the best K.
+3. Given all the significantly best and worse K pairs is there an overall best and worse K from all of the model and augmentation pairs?
 
 We are going to break down the code commands to generate the scores for these based on Metric and data split (Validation or Test). For each run it calculates the significants based on one-tailed paired bootstrap test with 10,000 bootstrap samples. As each of the models and augmentation techniques have been run 5 times to take into account the random seed problem we will take the median best model for each to compare significant values.
 
@@ -216,31 +218,30 @@ We are going to break down the code commands to generate the scores for these ba
 
 We will break this down for both the validation and test sets. For the validation sets for both Macro F1 and Accuracy scores for the laptop dataset:
 ``` bash
-python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Accuracy' Laptop 0.1 --bootstrap_samples 10000 --val
-python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Accuracy' Laptop 0.05 --bootstrap_samples 10000 --val
-python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Accuracy' Laptop 0.05 --bootstrap_samples 10000 --second_best --val
-python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Accuracy' Laptop 0.1 --bootstrap_samples 10000 --second_best --val
+./is_k_significant.sh ~/Envs/example_augmentation/bin/python ./results/augmentation/no_additional_targets/ ./data/splits/Laptop\ Val 'Accuracy' Laptop 10000 true true
+./is_k_significant.sh ~/Envs/example_augmentation/bin/python ./results/augmentation/no_additional_targets/ ./data/splits/Restaurant\ Val 'Accuracy' Restaurant 10000 true true
 ```
-The results for this can be found in the following [pdf](./latex/k_results/validation_accuracy.pdf) and [latex](./latex/k_results/validation_accuracy.latex) file (pdf is a rendering of the latex).
+The results for this can be found in the following [pdf](./latex/k_results/validation_accuracy.pdf) and [latex](./latex/k_results/validation_accuracy.latex) file (pdf is a rendering of the latex). As well as the number of times K was best and worse [pdf](./latex/k_results/validation_accuracy_best_worse.pdf) and [latex](./latex/k_results/validation_accuracy_best_worse.latex) file.
 
 #### Macro F1
 ``` bash
-python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.1 --bootstrap_samples 10000 --val
-python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.05 --bootstrap_samples 10000 --val
-python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.05 --bootstrap_samples 10000 --second_best --val
-python is_k_significant.py 5 ./results/augmentation/no_additional_targets/ ~/.Bella/Datasets/Laptop\ Val 'Macro F1' Laptop 0.1 --bootstrap_samples 10000 --second_best --val
+./is_k_significant.sh ~/Envs/example_augmentation/bin/python ./results/augmentation/no_additional_targets/ ./data/splits/Laptop\ Val 'Macro F1' Laptop 10000 true true
+./is_k_significant.sh ~/Envs/example_augmentation/bin/python ./results/augmentation/no_additional_targets/ ./data/splits/Restaurant\ Val 'Macro F1' Restaurant 10000 true true
 ```
-Number of models and augmentation techniques whose Best K is Statistically significantly (p < 0.1) better than the worse K is 7 out of 24 cases.
-Number of models and augmentation techniques whose Best K is Statistically significantly (p < 0.05) better than the worse K is 6 out of 24 cases
-Number of models and augmentation techniques whose Best K is Statistically significantly (p < 0.05) better than the second best K is 5 out of 24 cases
 
-
-The results for this can be found in the following [pdf](./latex/k_results/validation_macro_f1.pdf) and [latex](./latex/k_results/validation_macro_f1.latex) file (pdf is a rendering of the latex).
+The results for this can be found in the following [pdf](./latex/k_results/validation_macro_f1.pdf) and [latex](./latex/k_results/validation_macro_f1.latex) file.
 
 ### Test
 #### Accuracy
+``` bash
+./is_k_significant.sh ~/Envs/example_augmentation/bin/python ./results/augmentation/no_additional_targets/ ./data/splits/Laptop\ Test 'Accuracy' Laptop 10000 false true
+./is_k_significant.sh ~/Envs/example_augmentation/bin/python ./results/augmentation/no_additional_targets/ ./data/splits/Restaurant\ Test 'Accuracy' Restaurant 10000 false true
+```
 #### Macro F1
-
+``` bash
+./is_k_significant.sh ~/Envs/example_augmentation/bin/python ./results/augmentation/no_additional_targets/ ./data/splits/Laptop\ Test 'Macro F1' Laptop 10000 false true
+./is_k_significant.sh ~/Envs/example_augmentation/bin/python ./results/augmentation/no_additional_targets/ ./data/splits/Restaurant\ Test 'Macro F1' Restaurant 10000 false true
+```
 
 ## Converting the word vectors from binary file to text file
 ``` bash
@@ -266,8 +267,18 @@ ATAE Laptop with DS LM and Glove:
 ./laptop_run_script.sh /home/andrew/Envs/example_augmentation/bin/python ./model_configs/Laptop_ds_lm_embedding 'atae' 'atae_ds_lm_embedding'
 ```
 
+## Extra baselines
+python run_models.py 5 ./data/splits/ ./results/baseline ./model_configs/standard Laptop ./log_dir/Laptop_baseline_extra.log --model_names "lstm" "lstm_random" "ds_elmo_t_embedding_tune_laptop" "ds_elmo_t_embedding_laptop" "ds_elmo_t_laptop" "elmo_t" --model_name_save_names "lstm" "lstm_random" "ds_elmo_t_embedding_tune" "ds_elmo_t_embedding" "ds_elmo_t" "elmo_t"
+python run_models.py 5 ./data/splits/ ./results/baseline ./model_configs/standard Restaurant ./log_dir/Restaurant_baseline_extra.log --model_names "lstm" "lstm_random" "ds_elmo_t_embedding_tune_restaurant" "ds_elmo_t_embedding_restaurant" "ds_elmo_t_restaurant" "elmo_t" --model_name_save_names "lstm" "lstm_random" "ds_elmo_t_embedding_tune" "ds_elmo_t_embedding" "ds_elmo_t" "elmo_t"
+
+
+python run_models.py 1 ./data/splits/ ./results/baseline ./model_configs/standard Laptop ./log_dir/Laptop_baseline_extra_fine.log --model_names "ds_elmo_t_fine_tune_laptop" --model_name_save_names "ds_elmo_t_fine_tune"
 
 ## References
 
 1. [SemEval-2014 Task 4: Aspect Based Sentiment Analysis](https://aclanthology.info/papers/S14-2004/s14-2004)
 2. [TDParse: Multi-target-specific sentiment recognition on Twitter](https://aclanthology.info/papers/E17-1046/e17-1046)
+
+## Number of instances
+Laptop Train - 1851 - 58 batches with batch size 32
+Restaurant Train - 2882 - 91 batches with batch size 32
