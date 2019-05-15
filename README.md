@@ -272,7 +272,7 @@ python run_models.py 5 ./data/splits/ ./results/baseline ./model_configs/standar
 python run_models.py 5 ./data/splits/ ./results/baseline ./model_configs/standard Restaurant ./log_dir/Restaurant_baseline_extra.log --model_names "lstm" "lstm_random" "ds_elmo_t_embedding_tune_restaurant" "ds_elmo_t_embedding_restaurant" "ds_elmo_t_restaurant" "elmo_t" --model_name_save_names "lstm" "lstm_random" "ds_elmo_t_embedding_tune" "ds_elmo_t_embedding" "ds_elmo_t" "elmo_t"
 
 
-python run_models.py 1 ./data/splits/ ./results/baseline ./model_configs/standard Laptop ./log_dir/Laptop_baseline_extra_fine.log --model_names "ds_elmo_t_fine_tune_laptop" --model_name_save_names "ds_elmo_t_fine_tune"
+python run_models.py 1 ./data/splits/ ./results/baseline ./model_configs/standard Laptop ./log_dir/Laptop_baseline_extra_fine.log --model_names "ds_elmo_t_fine_tune_laptop" --model_name_save_names "ds_elmo_t_fine_tune" - Acc val, test 74.46, 77, macro f1 val, test 66.85, 71 epoch 30
 
 ## References
 
