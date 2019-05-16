@@ -13,7 +13,7 @@
         "token_embedders": {
               "elmo": {
                 "type": "bidirectional_lm_token_embedder",
-                "archive_file": "../amazon_language_model_save_large/model.tar.gz",
+                "archive_file": "../yelp_language_model_save_large/model.tar.gz",
                 "bos_eos_tokens": ["<S>", "</S>"],
                 "remove_bos_eos": true,
                 "requires_grad": true
