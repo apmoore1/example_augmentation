@@ -282,3 +282,6 @@ python run_models.py 1 ./data/splits/ ./results/baseline ./model_configs/standar
 ## Number of instances
 Laptop Train - 1851 - 58 batches with batch size 32
 Restaurant Train - 2882 - 91 batches with batch size 32
+
+# Extract the predicted targets
+The data from the predicted targets can be found at the following Path `../predicted_targets_train.txt` which used a state of the art Target Extraction method. We want to first find all of the targets and then find the related confidence scores.
