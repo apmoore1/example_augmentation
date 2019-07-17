@@ -282,3 +282,23 @@ python run_models.py 1 ./data/splits/ ./results/baseline ./model_configs/standar
 ## Number of instances
 Laptop Train - 1851 - 58 batches with batch size 32
 Restaurant Train - 2882 - 91 batches with batch size 32
+
+## See the amount of the unlabelled data in amazon, yelp, and elections that have bad unicode
+To do this we are going to use the [ftfy package](https://pypi.org/project/ftfy/). First we are going to see the scale of the problem using the following script:
+``` bash
+python text_encoding_issues_ftfy.py ../MP-Tweets/filtered_split_train.txt
+python text_encoding_issues_ftfy.py ../amazon/filtered_split_train.txt
+python text_encoding_issues_ftfy.py ../yelp/splits/filtered_split_train.txt
+```
+However the problem is more difficult than I relaise as this needs to be fixed before the tokenization happens as shown below:
+```python
+ftfy_text = 'All mounts have different tv \'s on them , One is a 50&#34 ; , 40&#34 ; and a 32". Product comes with multiple screw for different tvs .\n'
+text_before_hand = "All mounts have different tv 's on them , One is a 50&#34 ; , 40&#34 ; and a 32&#34;. Product comes with multiple screw for different tvs .\n"
+```
+As we can see it should have 40 and 50 as 40" and 50" like it corrected the 32. However this has not happened due to the tokenization.
+
+## Training a Target Extraction method:
+We want to find new targets within large samples of text so that we can then uses these to help augmentation. To do so first we must train our Target Extraction models. We will use a standard LSTM based approach and use the domain specific ELMo Transformer models to help with the word representations:
+``` bash
+python target_extraction_train_predict.py semeval_2014 --train_fp ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Laptop_Train_v2.xml --test_fp ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Laptops_Test_Gold.xml target_extraction_configs/amazon.jsonnet /tmp/amazon_target_extraction_model ../amazon/filtered_split_train.txt /tmp/amazon_predicted_targets.txt
+```
