@@ -8,3 +8,7 @@ __pycache__
 *.pdf
 *.synctex*
 *.fls
+log_dir
+augmented_data
+original_augmentation_datasets
+target_words
