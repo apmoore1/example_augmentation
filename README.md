@@ -299,10 +299,25 @@ text_before_hand = "All mounts have different tv 's on them , One is a 50&#34 ; 
 As we can see it should have 40 and 50 as 40" and 50" like it corrected the 32. However this has not happened due to the tokenization.
 
 ## Training a Target Extraction method:
-We want to find new targets within large samples of text so that we can then uses these to help augmentation. To do so first we must train our Target Extraction models. We will use a standard LSTM based approach and use the domain specific ELMo Transformer models to help with the word representations:
+We want to find new targets within large samples of text so that we can then uses these to help augmentation. To do so first we must train our Target Extraction models. We will use a standard LSTM based approach and use the domain specific ELMo Transformer models to help with the word representations. We shall do this for each of the datasets.
+
+### Amazon (SemEval 2014 Laptop domain)
 ``` bash
-python target_extraction_train_predict.py semeval_2014 --train_fp ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Laptop_Train_v2.xml --test_fp ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Laptops_Test_Gold.xml target_extraction_configs/amazon.jsonnet /tmp/amazon_target_extraction_model ../amazon/filtered_split_train.txt /tmp/amazon_predicted_targets.txt
+python target_extraction_train_predict.py semeval_2014 --train_fp ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Laptop_Train_v2.xml --test_fp ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Laptops_Test_Gold.xml --number_to_predict_on 1000000 --batch_size 256 target_extraction_configs/amazon.jsonnet ./target_extract_models/amazon ../amazon/filtered_split_train.txt /tmp/amazon_predicted_targets.txt
 ```
+This should produce a Test F1 score of around: 0.85 (0.85423197492163) which is around the state-of-the-art performance ([0.8426](https://www.aclweb.org/anthology/N19-1242)), this also takes around 82 minutes to make predictions for all 1,000,000 sentences.
+
+### Yelp (SemEval 2014 Restaurant domain)
+``` bash
+python target_extraction_train_predict.py --train_fp ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Restaurants_Train_v2.xml --test_fp ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Restaurants_Test_Gold.xml --number_to_predict_on 1000000 --batch_size 256 semeval_2014 ./target_extraction_configs/yelp.jsonnet ./target_extract_models/yelp ../yelp/splits/filtered_split_train.txt /tmp/yelp_predicted_targets.txt
+```
+This should produce a Test F1 score of around 0.88 (0.882843352347521) which beats the state-of-the-art on this dataset ([85.61](https://www.ijcai.org/proceedings/2018/0583.pdf)), this also takes around 69 minutes to make predictions for all 1,000,000 sentences.
+
+### MP Tweets (Twitter Election dataset)
+``` bash
+python target_extraction_train_predict.py --number_to_predict_on 1000000 --batch_size 256 election_twitter ./target_extraction_configs/mp.jsonnet ./target_extract_models/mp ../MP-Tweets/filtered_split_train.txt /tmp/mp_predicted_targets.txt
+```
+This should produce a Test F1 score of around 0.8778 (0.8778369844089204) (no baseline paper to compare to), this also takes around 104 minutes to make predictions fro all 1,000,000 sentences.
 
 # Extract the predicted targets
 The data from the predicted targets can be found at the following Path `../predicted_targets_train.txt` which used a state of the art Target Extraction method. We want to first find all of the targets and then find the related confidence scores.

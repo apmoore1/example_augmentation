@@ -2,5 +2,5 @@ bella-tdsa
 gensim
 allennlp
 pylint
--e git+git://github.com/apmoore1/Bella-AllenNLP@master#egg=bella-allennlp
+-e git+git://github.com/apmoore1/Bella-AllenNLP@master#egg=bella-allen-nlp
 -e git+git://github.com/apmoore1/target-extraction@master#egg=target-extraction
