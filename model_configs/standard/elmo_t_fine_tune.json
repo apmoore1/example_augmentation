@@ -1,0 +1,70 @@
+{
+    "dataset_reader": {
+        "type": "target_dataset",
+        "token_indexers": {
+          "elmo": {
+            "type": "elmo_characters"
+          }
+        }
+      },
+    "model": {
+      "type": "target_classifier",
+      "text_field_embedder": {
+        "token_embedders": {
+              "elmo": {
+                "type": "bidirectional_lm_token_embedder",
+                "archive_file": "../transformer-elmo-2019.01.10.tar.gz",
+                "bos_eos_tokens": ["<S>", "</S>"],
+                "remove_bos_eos": true,
+                "requires_grad": true
+              }
+          }
+      },
+      "text_encoder": {
+        "type": "lstm",
+        "bidirectional": true,
+        "input_size": 1024,
+        "hidden_size": 100,
+        "num_layers": 1
+      },
+      "target_encoder": {
+        "type": "lstm",
+        "bidirectional": true,
+        "input_size": 1024,
+        "hidden_size": 100,
+        "num_layers": 1
+      },
+      "dropout": 0.5
+    },
+    "iterator": {
+        "type": "basic",
+        "batch_size": 32
+      },
+  
+    "trainer": {
+        "num_epochs": 20,
+        "cuda_device": 0,
+        "shuffle": true,
+        "validation_metric": "+accuracy",
+        "optimizer": {
+            "type": "adam",
+            "parameter_groups": [
+              [["text_field_embedder.*token_characters.*"], {}],
+              [["text_field_embedder.*contextualizer.*layers.0.*"], {}],
+              [["text_field_embedder.*contextualizer.*layers.1.*"], {}],
+              [["text_field_embedder.*contextualizer.*layers.2.*"], {}],
+              [["text_field_embedder.*contextualizer.*layers.3.*"], {}],
+              [["text_field_embedder.*contextualizer.*layers.4.*"], {}],
+              [["text_field_embedder.*contextualizer.*layers.5.*", ".*backward_transformer.norm.beta", 
+                ".*forward_transformer.norm.beta", ".*forward_transformer.norm.gamma", ".*backward_transformer.norm.gamma"], {}],
+              [["text_encoder.*", "target_encoder.*", "label_projection.*", ".*scalar_mix.*"], {}]]
+        },
+        "learning_rate_scheduler": {
+            "type": "slanted_triangular",
+            "num_epochs": 20,
+            "num_steps_per_epoch": 58,
+            "gradual_unfreezing": true,
+            "discriminative_fine_tuning": true
+        }
+      }
+  }

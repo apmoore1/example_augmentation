@@ -303,22 +303,74 @@ We want to find new targets within large samples of text so that we can then use
 
 ### Amazon (SemEval 2014 Laptop domain)
 ``` bash
-python target_extraction_train_predict.py semeval_2014 --train_fp ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Laptop_Train_v2.xml --test_fp ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Laptops_Test_Gold.xml --number_to_predict_on 1000000 --batch_size 256 target_extraction_configs/amazon.jsonnet ./target_extract_models/amazon ../amazon/filtered_split_train.txt /tmp/amazon_predicted_targets.txt
+python target_extraction_train_predict.py semeval_2014 --train_fp ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Laptop_Train_v2.xml --test_fp ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Laptops_Test_Gold.xml --number_to_predict_on 1000000 --batch_size 256 target_extraction_configs/amazon.jsonnet ./target_extract_models/amazon ../amazon/filtered_split_train.txt ../extra_target_data/amazon_predicted_targets.txt
 ```
 This should produce a Test F1 score of around: 0.85 (0.85423197492163) which is around the state-of-the-art performance ([0.8426](https://www.aclweb.org/anthology/N19-1242)), this also takes around 82 minutes to make predictions for all 1,000,000 sentences.
 
 ### Yelp (SemEval 2014 Restaurant domain)
 ``` bash
-python target_extraction_train_predict.py --train_fp ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Restaurants_Train_v2.xml --test_fp ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Restaurants_Test_Gold.xml --number_to_predict_on 1000000 --batch_size 256 semeval_2014 ./target_extraction_configs/yelp.jsonnet ./target_extract_models/yelp ../yelp/splits/filtered_split_train.txt /tmp/yelp_predicted_targets.txt
+python target_extraction_train_predict.py --train_fp ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Restaurants_Train_v2.xml --test_fp ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Restaurants_Test_Gold.xml --number_to_predict_on 1000000 --batch_size 256 semeval_2014 ./target_extraction_configs/yelp.jsonnet ./target_extract_models/yelp ../yelp/splits/filtered_split_train.txt ../extra_target_data/yelp_predicted_targets.txt
 ```
 This should produce a Test F1 score of around 0.88 (0.882843352347521) which beats the state-of-the-art on this dataset ([85.61](https://www.ijcai.org/proceedings/2018/0583.pdf)), this also takes around 69 minutes to make predictions for all 1,000,000 sentences.
 
 ### MP Tweets (Twitter Election dataset)
 ``` bash
-python target_extraction_train_predict.py --number_to_predict_on 1000000 --batch_size 256 election_twitter ./target_extraction_configs/mp.jsonnet ./target_extract_models/mp ../MP-Tweets/filtered_split_train.txt /tmp/mp_predicted_targets.txt
+python target_extraction_train_predict.py --number_to_predict_on 1000000 --batch_size 256 election_twitter ./target_extraction_configs/mp.jsonnet ./target_extract_models/mp ../MP-Tweets/filtered_split_train.txt ../extra_target_data/mp_predicted_targets.txt
 ```
 This should produce a Test F1 score of around 0.8778 (0.8778369844089204) (no baseline paper to compare to), this also takes around 104 minutes to make predictions fro all 1,000,000 sentences.
 
-# Extract the predicted targets
-The data from the predicted targets can be found at the following Path `../predicted_targets_train.txt` which used a state of the art Target Extraction method. We want to first find all of the targets and then find the related confidence scores.
+# Analysis the predicted targets
+As all of the predicted target data is within the following directory `../extra_target_data` we now want to analysis them to see how they differ from the original gold standard datasets. In all of the cases when we are extracting out the predicted targets we are only going to retrieve the targets that the model is 90% confident that it is a target.
+## Yelp (SemEval Restaurant)
+``` bash
+python predicted_target_extraction.py ../extra_target_data/yelp_predicted_targets.txt ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Restaurants_Train_v2.xml ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Restaurants_Test_Gold.xml 0.9
+```
+Output
+```
+Percentage of targets that have been predicted that are in train: 43.84937238493724
+Percentage of targets that have been predicted that are in test: 51.73076923076923
+Number of new predicted targets that are in the whole gold datasets: 632 compared to that are not: 896
+Number of new predicted and training targets that are in the test datasets: 287 compared to that are not: 233
+Number of new predicted targets that are in the test datasets: 269 compared to that are not: 251
+Number of new training targets that are in the test datasets: 187 compared to that are not: 333
+Total number of predicted targets: 12042
+Number of targets in train: 1195
+Number of targets in test: 520
+Number of targets in train and test: 1528
+```
 
+## Amazon (SemEval Laptop)
+``` bash
+python predicted_target_extraction.py ../extra_target_data/amazon_predicted_targets.txt ../../Music/original_target_datasets/semeval_2014/SemEval\'14-ABSA-TrainData_v2\ \&\ AnnotationGuidelines/Laptop_Train_v2.xml ../../Music/original_target_datasets/semeval_2014/ABSA_Gold_TestData/Laptops_Test_Gold.xml 0.9
+```
+Output
+```
+Percentage of targets that have been predicted that are in train: 44.12698412698413
+Percentage of targets that have been predicted that are in test: 50.128534704370175
+Number of new predicted targets that are in the whole gold datasets: 484 compared to that are not: 697
+Number of new predicted and training targets that are in the test datasets: 214 compared to that are not: 175
+Number of new predicted targets that are in the test datasets: 195 compared to that are not: 194
+Number of new training targets that are in the test datasets: 153 compared to that are not: 236
+Total number of predicted targets: 6716
+Number of targets in train: 945
+Number of targets in test: 389
+Number of targets in train and test: 1181
+```
+
+## MP (Election Twitter)
+``` bash
+python predicted_target_extraction.py --election ../extra_target_data/mp_predicted_targets.txt . . 0.9
+```
+Output
+```
+Percentage of targets that have been predicted that are in train: 42.40129799891834
+Percentage of targets that have been predicted that are in test: 53.12916111850865
+Number of new predicted targets that are in the whole gold datasets: 886 compared to that are not: 1293
+Number of new predicted and training targets that are in the test datasets: 523 compared to that are not: 228
+Number of new predicted targets that are in the test datasets: 399 compared to that are not: 352
+Number of new training targets that are in the test datasets: 421 compared to that are not: 330
+Total number of predicted targets: 125954
+Number of targets in train: 1849
+Number of targets in test: 751
+Number of targets in train and test: 2179
+```
